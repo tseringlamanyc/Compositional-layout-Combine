@@ -41,8 +41,13 @@ class PhotoSearchVC: UIViewController {
         configureSearchController()
         
         // subscribe to the searchText 'Publisher'
-        $searchText.sink { (text) in
+        $searchText
+            .debounce(for: .seconds(1.0), scheduler: RunLoop.main)
+            .removeDuplicates()
+            .sink { (text) in
             print(text)
+            
+            // call the api client for the photo search queue 
         }
         .store(in: &subscriptions)
     }
@@ -115,6 +120,6 @@ extension PhotoSearchVC: UISearchResultsUpdating {
         }
         searchText = text
         // upon assigning a new value to the searchText
-        // the subscriber in the viewDidLoad will receive that value 
+        // the subscriber in the viewDidLoad will receive that value
     }
 }
