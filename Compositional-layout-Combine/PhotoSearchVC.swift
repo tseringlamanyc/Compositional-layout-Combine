@@ -13,24 +13,38 @@ class PhotoSearchVC: UIViewController {
         case main
     }
     
+    // declare collectionView
     private var collectionView: UICollectionView!
     
+    // declare DataSource
     typealias DataSource = UICollectionViewDiffableDataSource<SectionKind, Int>
     private var dataSource: DataSource!
+    
+    // declare search controller
+    private var searchController: UISearchController!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.title = "Photo Search"
         configureCollectionView()
         configureDataSource()
+        configureSearchController()
     }
     
     private func configureCollectionView() {
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createLayout())
         collectionView.register(ImageCell.self, forCellWithReuseIdentifier: ImageCell.reuseIdentifier)
-        collectionView.backgroundColor = .systemBlue
+        collectionView.backgroundColor = .systemBackground
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         view.addSubview(collectionView)
+    }
+    
+    private func configureSearchController() {
+        searchController = UISearchController(searchResultsController: nil)
+        navigationItem.searchController = searchController
+        searchController.searchResultsUpdater = self // delegate
+        searchController.searchBar.autocapitalizationType = .none
+        searchController.obscuresBackgroundDuringPresentation = false
     }
 
     private func createLayout() -> UICollectionViewLayout {
@@ -78,3 +92,8 @@ class PhotoSearchVC: UIViewController {
     }
 }
 
+extension PhotoSearchVC: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        print("")
+    }
+}
