@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine // asynchronous programming framework iOS 13
 
 class PhotoSearchVC: UIViewController {
     
@@ -22,6 +23,15 @@ class PhotoSearchVC: UIViewController {
     
     // declare search controller
     private var searchController: UISearchController!
+    
+    // declare searchtext property that will be a 'publisher' - that listens for changes from the searchBar on the search controller
+    // in order to make any property a publisher you need to append the @Publisher property wrapper
+    // to subscribe to the searchtext's 'Publisher' a $ needs to be prefixed to searchText ==> $earchText
+    
+    @Published private var searchText = ""
+    
+    // store subscriptions
+    private var subscriptions: Set<AnyCancellable> = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +39,12 @@ class PhotoSearchVC: UIViewController {
         configureCollectionView()
         configureDataSource()
         configureSearchController()
+        
+        // subscribe to the searchText 'Publisher'
+        $searchText.sink { (text) in
+            print(text)
+        }
+        .store(in: &subscriptions)
     }
     
     private func configureCollectionView() {
@@ -94,6 +110,11 @@ class PhotoSearchVC: UIViewController {
 
 extension PhotoSearchVC: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        print("")
+        guard let text = searchController.searchBar.text, !text.isEmpty else {
+            return
+        }
+        searchText = text
+        // upon assigning a new value to the searchText
+        // the subscriber in the viewDidLoad will receive that value 
     }
 }
