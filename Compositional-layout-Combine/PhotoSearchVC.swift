@@ -7,6 +7,7 @@
 
 import UIKit
 import Combine // asynchronous programming framework iOS 13
+import Kingfisher
 
 class PhotoSearchVC: UIViewController {
     
@@ -115,11 +116,13 @@ class PhotoSearchVC: UIViewController {
     private func configureDataSource() {
         
         // initializing datasource
-        dataSource = DataSource(collectionView: collectionView, cellProvider: { (collectionView, indexPath, int) -> UICollectionViewCell? in
+        dataSource = DataSource(collectionView: collectionView, cellProvider: { (collectionView, indexPath, photo) -> UICollectionViewCell? in
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCell.reuseIdentifier, for: indexPath) as? ImageCell else {
                 fatalError()
             }
-            cell.backgroundColor = .systemGray
+            cell.backgroundColor = .systemGray6
+            cell.imageView.kf.setImage(with: URL(string: photo.webformatURL))
+            cell.imageView.contentMode = .scaleAspectFill
             return cell
         })
         
